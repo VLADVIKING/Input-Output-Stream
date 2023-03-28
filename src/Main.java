@@ -4,39 +4,37 @@ public class Main {
     static Basket basket = new Basket(new String[]{"Молоко", "Кефир", "Сметана", "Хлеб", "Батон"}, new long[]{75, 60, 80, 50, 40});
 
     public static void main(String[] args) throws IOException {
-        File newFile = new File("basket.txt");
+        File newFile = new File("basket.bin");
         if (newFile.exists()) {
-            loadFromTxtFile(newFile);
+            loadFromBinFile(newFile);
         }
 
         basket.addToCart(1, 2);
-        basket.saveTxt(newFile);
+        saveBin(newFile);
         basket.addToCart(3, 4);
-        basket.saveTxt(newFile);
+        saveBin(newFile);
         basket.addToCart(5, 1);
-        basket.saveTxt(newFile);
+        saveBin(newFile);
         basket.addToCart(1, 2);
-        basket.saveTxt(newFile);
+        saveBin(newFile);
         basket.addToCart(1, 2);
-        basket.saveTxt(newFile);
+        saveBin(newFile);
         basket.printCart();
-
     }
 
-    public static Basket loadFromTxtFile(File textFile) {
-        try (BufferedReader in = new BufferedReader(new FileReader("basket.txt"))) {
-            String line;
-            while ((line = in.readLine()) != null) {
-                System.out.println(line);
-                String[] arr = line.split(" ");
-                int[] y = new int[arr.length];
-                for (int i = 0; i < arr.length; i++) {
-                    y[i] = Integer.parseInt(arr[i]);
-                }
-                basket.setProductQuantity(y);
-            }
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
+    static void saveBin(File file) {
+        try (FileOutputStream fos = new FileOutputStream("basket.bin");
+             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+            oos.writeObject(basket);
+        } catch (Exception ex) {
+        }
+    }
+
+    static Basket loadFromBinFile(File file) {
+        try (FileInputStream fis = new FileInputStream("basket.bin");
+             ObjectInputStream ois = new ObjectInputStream(fis)) {
+            basket = (Basket) ois.readObject();
+        } catch (Exception ex) {
         }
         return null;
     }

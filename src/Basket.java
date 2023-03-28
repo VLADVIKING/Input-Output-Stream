@@ -1,6 +1,7 @@
 import java.io.*;
 
-public class Basket {
+public class Basket implements Serializable{
+
     private String[] products;
     private long[] prices;
     private int[] productQuantity;
@@ -41,13 +42,6 @@ public class Basket {
                 "%d руб.", totalPrice);
     }
 
-    public void saveTxt(File textFile) throws IOException {
-        try (PrintWriter out = new PrintWriter("basket.txt");) {
-            for (int pQ : productQuantity) {
-                out.print(pQ + " ");
-           }
-        }
-    }
 }
 
 
