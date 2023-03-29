@@ -1,6 +1,11 @@
-import java.io.*;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
-public class Basket implements Serializable{
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class Basket {
 
     private String[] products;
     private long[] prices;
@@ -13,15 +18,9 @@ public class Basket implements Serializable{
         this.productQuantity = new int[products.length];
     }
 
-    public int[] getProductQuantity() {
-        return productQuantity;
-    }
-
-    public void setProductQuantity(int[] productQuantity) {
-        this.productQuantity = productQuantity;
-    }
-
     public void addToCart(int productNum, int amount) {
+        ClientLog clientLog = new ClientLog();
+        clientLog.log(productNum, amount);
         totalPrice = 0;
         for (int i = 0; i < products.length; i++) {
             if (i == productNum - 1) {
@@ -40,6 +39,44 @@ public class Basket implements Serializable{
         }
         System.out.printf("Итого: \n" +
                 "%d руб.", totalPrice);
+    }
+
+    public void saveBasket(File textFile) {
+        JSONObject obj = new JSONObject();
+        JSONArray listProducts = new JSONArray();
+        JSONArray listQuantity = new JSONArray();
+        JSONArray listPrices = new JSONArray();
+        JSONArray listProductPrices = new JSONArray();
+        for (int i = 0; i < products.length; i++) {
+            if (productQuantity[i] > 0) {
+                listProducts.add(products[i]);
+                obj.put("Товар", listProducts);
+
+            }
+            if (productQuantity[i] > 0) {
+                listQuantity.add(productQuantity[i]);
+                obj.put("Количество", listQuantity);
+
+            }
+            if (productQuantity[i] > 0) {
+                listPrices.add(prices[i]);
+                obj.put("Цена за ед.", listPrices);
+
+            }
+            if (productQuantity[i] > 0) {
+                listProductPrices.add(prices[i] * productQuantity[i]);
+                obj.put("Цена за товар", listProductPrices);
+
+            }
+
+        }
+        try (FileWriter file = new FileWriter(textFile)) {
+            file.write(obj.toJSONString());
+            file.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }
